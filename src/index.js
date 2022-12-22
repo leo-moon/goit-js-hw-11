@@ -53,7 +53,7 @@ function onSubmit(e) {
     if  (data.totalHits > perPage) {    
       refs.loadMoreBtn.classList.remove('is-hidden')
     }
-    Notify.success(`Hooray! We found ${data.totalHits} images.`);
+    Notify.success(`Hooray! We found ${data.totalHits} images.11111`);
   })
 
 
@@ -73,12 +73,8 @@ function onSubmit(e) {
           refs.loadMoreBtn.classList.add('is-hidden');
           console.log('End')
           Notify.info("We're sorry, but you've reached the end of search results.");
-          // Notify.success('Sol lucet omnibus');
-          // Notify.failure('Qui timide rogat docet negare');
-          // Notify.warning('Memento te hominem esse');
-          // Notify.info('Cogito ergo sum');
         }
-        else    { Notify.success(`Hooray! We found ${totalHits} images.`);}
+        else    { Notify.success(`Hooray! We found ${totalHits} images.22222`);}
 
 
       })
