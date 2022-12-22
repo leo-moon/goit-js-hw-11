@@ -9,6 +9,7 @@ import { createCards } from './js/create-cards'
 
 let simpleLightBox;
 let searchQuery = '';
+const perPage = 4;
 
 const refs = {
   searchForm : document.querySelector('.search-form'),
@@ -27,7 +28,7 @@ function onSubmit(e) {
   // if (searchQuery === '') { return }
   let currentPage = 1;
 
-  fetchImages(searchQuery, currentPage).then(({ data }) => {
+  fetchImages(searchQuery, currentPage, perPage).then(({ data }) => {
     const images = data;
     console.log(images);
     console.log('aaa', data.totalHits, data.hits)
@@ -52,13 +53,15 @@ function onSubmit(e) {
     currentPage += 1
     simpleLightBox.destroy()
 
-    fetchImages(searchQuery, currentPage)
+    fetchImages(searchQuery, currentPage, perPage)
       .then(({ data }) => {
         createCards(data.hits)
         simpleLightBox = new SimpleLightbox('.gallery a').refresh()
 
-        const aa = -2
-        if (!(aa)) {console.log(aa)}
+        if  (data.totalHits < perPage * currentPage) {    
+          refs.loadMoreBtn.classList.add('is-hidden');
+          console.log('End')
+        }
 
 
         // const totalPages = Math.ceil(data.totalHits / perPage)
