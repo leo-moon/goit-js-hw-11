@@ -11,7 +11,7 @@ import { createCards } from './js/create-cards'
 
 let simpleLightBox;
 let searchQuery = '';
-const perPage = 4;
+const perPage = 40;
 
 const refs = {
   searchForm : document.querySelector('.search-form'),
@@ -34,7 +34,7 @@ function onSubmit(e) {
     .then(({ data }) => {
       const images = data;
       const totalHits = images.totalHits
-      if (data.hits.length === 0) {
+      if (images.hits.length === 0) {
         console.log('alarm')
         alertNoImagesFound()
         return
@@ -47,11 +47,10 @@ function onSubmit(e) {
       }
       catch {(error) => console.log(error)}
 
-      
       if  (totalHits > perPage) {    
         refs.loadMoreBtn.classList.remove('is-hidden')
       }
-      alertImagesFound(data)
+      alertImagesFound(totalHits)
     })
     .catch(error => console.log(error))
 
@@ -60,35 +59,35 @@ function onSubmit(e) {
   refs.loadMoreBtn.addEventListener('click', onLoadMoreBtn);
 
   function onLoadMoreBtn() {
-    let totalHits;
+    let totalHits = 0;
     currentPage += 1
     simpleLightBox.destroy()
     try {
       fetchImages(searchQuery, currentPage, perPage)
       .then(({ data }) => {
+        // console.log('totalHits1',totalHits)
         totalHits = data.totalHits;
+        // console.log('totalHits2',totalHits)
         createCards(data.hits)
         simpleLightBox = new SimpleLightbox('.gallery a').refresh()
+
+        if  (totalHits < perPage * currentPage) {    
+          refs.loadMoreBtn.classList.add('is-hidden');
+          // console.log('totalHits',totalHits)
+          alertEndOfSearch();
+        }
+        else alertImagesFound(totalHits)
       })
       .catch(error => console.log(error))
     }
     catch {(error) => console.log(error)}
 
-    if  (totalHits < perPage * currentPage) {    
-      refs.loadMoreBtn.classList.add('is-hidden');
-      // console.log('End')
-      alertEndOfSearch();
-    }
-    else alertImagesFound(data)  
+    // console.log('totalHits3',totalHits)
   }
 }
 
-function alertImagesFound(data) {
-  Notify.success(`Hooray! We found ${data.totalHits} images.`)
-}
-
-function alertNoEmptySearch() {
-  Notify.failure('The search string cannot be empty. Please specify your search query.')
+function alertImagesFound(totalHits) {
+  Notify.success(`Hooray! We found ${totalHits} images.`)
 }
 
 function alertNoImagesFound() {
