@@ -30,56 +30,71 @@ function onSubmit(e) {
   // if (searchQuery === '') { return }
   let currentPage = 1;
 
-  fetchImages(searchQuery, currentPage, perPage).then(({ data }) => {
-    const images = data;
-    console.log(images);
-    console.log('aaa', data.totalHits, data.hits)
-    if (data.hits.length === 0) {
-      console.log('alarm')
-      Notify.failure('Sorry, there are no images matching your search query. Please try again.');
-      // Notify.success('Sol lucet omnibus');
-      // Notify.failure('Qui timide rogat docet negare');
-      // Notify.warning('Memento te hominem esse');
-      // Notify.info('Cogito ergo sum');
-      return
-    }
-    Notify.success(`Hooray! We found ${data.totalHits} images.`);
+  fetchImages(searchQuery, currentPage, perPage)
+    .then(({ data }) => {
+      const images = data;
+      const totalHits = images.totalHits
+      if (data.hits.length === 0) {
+        console.log('alarm')
+        alertNoImagesFound()
+        return
+      }
 
-    // построить   (images)
-    createCards(images.hits);
-    simpleLightBox = new SimpleLightbox('.gallery a').refresh();
-    
+      // построить   (images)
+      try {
+        createCards(images.hits);
+        simpleLightBox = new SimpleLightbox('.gallery a').refresh();
+      }
+      catch {(error) => console.log(error)}
 
-    if  (data.totalHits > perPage) {    
-      refs.loadMoreBtn.classList.remove('is-hidden')
-    }
-    Notify.success(`Hooray! We found ${data.totalHits} images.11111`);
-  })
+      
+      if  (totalHits > perPage) {    
+        refs.loadMoreBtn.classList.remove('is-hidden')
+      }
+      alertImagesFound(data)
+    })
+    .catch(error => console.log(error))
 
 
   // добавить ещё картинки
   refs.loadMoreBtn.addEventListener('click', onLoadMoreBtn);
 
   function onLoadMoreBtn() {
+    let totalHits;
     currentPage += 1
     simpleLightBox.destroy()
-
-    fetchImages(searchQuery, currentPage, perPage)
+    try {
+      fetchImages(searchQuery, currentPage, perPage)
       .then(({ data }) => {
+        totalHits = data.totalHits;
         createCards(data.hits)
         simpleLightBox = new SimpleLightbox('.gallery a').refresh()
-
-        if  (data.totalHits < perPage * currentPage) {    
-          refs.loadMoreBtn.classList.add('is-hidden');
-          console.log('End')
-          Notify.info("We're sorry, but you've reached the end of search results.");
-        }
-        else    { Notify.success(`Hooray! We found ${totalHits} images.22222`);}
-
-
       })
       .catch(error => console.log(error))
-  }
+    }
+    catch {(error) => console.log(error)}
 
+    if  (totalHits < perPage * currentPage) {    
+      refs.loadMoreBtn.classList.add('is-hidden');
+      // console.log('End')
+      alertEndOfSearch();
+    }
+    else alertImagesFound(data)  
+  }
 }
 
+function alertImagesFound(data) {
+  Notify.success(`Hooray! We found ${data.totalHits} images.`)
+}
+
+function alertNoEmptySearch() {
+  Notify.failure('The search string cannot be empty. Please specify your search query.')
+}
+
+function alertNoImagesFound() {
+  Notify.failure('Sorry, there are no images matching your search query. Please try again.')
+}
+
+function alertEndOfSearch() {
+  Notify.info("We're sorry, but you've reached the end of search results.")
+}

@@ -1,12 +1,12 @@
 export {createCards};
 
-function createCards(images) {
+async function createCards(images) {
   const divGalleryRef = document.querySelector('.gallery')
   
   const markup = images
     .map(image => {
       const { id, largeImageURL, webformatURL, tags, likes, views, comments, downloads } = image
-      return `
+      return  `
         <a class="gallery__item" href="${largeImageURL}">
           <div class="photo-card" id="${id}">
             <img class="photo-card__img" src="${webformatURL}" alt="${tags}" loading="lazy" />
@@ -22,5 +22,5 @@ function createCards(images) {
     })
     .join('')
 
-  divGalleryRef.insertAdjacentHTML('beforeend', markup)
+    await divGalleryRef.insertAdjacentHTML('beforeend', markup)
 }
