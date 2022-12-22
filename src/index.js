@@ -30,10 +30,18 @@ function onSubmit(e) {
   fetchImages(searchQuery, currentPage).then(({ data }) => {
     const images = data;
     console.log(images);
+    console.log('aaa', data.totalHits, data.hits)
+    if (data.hits.length === 0) {
+      console.log('alarm')
+      return
+    }
     // построить   (images)
     createCards(images.hits);
     simpleLightBox = new SimpleLightbox('.gallery a').refresh();
-    refs.loadMoreBtn.classList.remove('is-hidden');
+    if  (data.totalHits > 4) {    
+      refs.loadMoreBtn.classList.remove('is-hidden');
+    }
+    // refs.loadMoreBtn.classList.remove('is-hidden');
   })
 
 
@@ -46,13 +54,12 @@ function onSubmit(e) {
 
     fetchImages(searchQuery, currentPage)
       .then(({ data }) => {
-        console.log('aaaaaaaa', data.totalHits, data.hits)
-        if (totalHits === 0) {
-          console.log('aaaaaaaa')
-          return
-        }
         createCards(data.hits)
         simpleLightBox = new SimpleLightbox('.gallery a').refresh()
+
+        const aa = -2
+        if (!(aa)) {console.log(aa)}
+
 
         // const totalPages = Math.ceil(data.totalHits / perPage)
 
