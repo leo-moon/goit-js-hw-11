@@ -87,13 +87,13 @@ function onSubmit(e) {
 }
 
 function alertImagesFound(totalHits) {
-  Notify.success(`Hooray! We found ${totalHits} images.`)
+  setTimeout(Notify.success(`Hooray! We found ${totalHits} images.`),1000)
 }
 
 function alertNoImagesFound() {
-  Notify.failure('Sorry, there are no images matching your search query. Please try again.')
+  setTimeout(Notify.failure('Sorry, there are no images matching your search query. Please try again.'),1000)
 }
 
 function alertEndOfSearch() {
-  Notify.info("We're sorry, but you've reached the end of search results.")
+  setTimeout(Notify.info("We're sorry, but you've reached the end of search results."),1000)
 }
