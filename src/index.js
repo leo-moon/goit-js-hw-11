@@ -2,6 +2,8 @@
 // import axios from 'axios';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
 import { fetchImages } from './js/fetch-images'
 import { createCards } from './js/create-cards'
 
@@ -34,15 +36,24 @@ function onSubmit(e) {
     console.log('aaa', data.totalHits, data.hits)
     if (data.hits.length === 0) {
       console.log('alarm')
+      Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+      // Notify.success('Sol lucet omnibus');
+      // Notify.failure('Qui timide rogat docet negare');
+      // Notify.warning('Memento te hominem esse');
+      // Notify.info('Cogito ergo sum');
       return
     }
+    Notify.success(`Hooray! We found ${data.totalHits} images.`);
+
     // построить   (images)
     createCards(images.hits);
     simpleLightBox = new SimpleLightbox('.gallery a').refresh();
-    if  (data.totalHits > 4) {    
-      refs.loadMoreBtn.classList.remove('is-hidden');
+    
+
+    if  (data.totalHits > perPage) {    
+      refs.loadMoreBtn.classList.remove('is-hidden')
     }
-    // refs.loadMoreBtn.classList.remove('is-hidden');
+    Notify.success(`Hooray! We found ${data.totalHits} images.`);
   })
 
 
@@ -61,15 +72,15 @@ function onSubmit(e) {
         if  (data.totalHits < perPage * currentPage) {    
           refs.loadMoreBtn.classList.add('is-hidden');
           console.log('End')
+          Notify.info("We're sorry, but you've reached the end of search results.");
+          // Notify.success('Sol lucet omnibus');
+          // Notify.failure('Qui timide rogat docet negare');
+          // Notify.warning('Memento te hominem esse');
+          // Notify.info('Cogito ergo sum');
         }
+        else    { Notify.success(`Hooray! We found ${totalHits} images.`);}
 
 
-        // const totalPages = Math.ceil(data.totalHits / perPage)
-
-        // if (page > totalPages) {
-        //   loadMoreBtn.classList.add('is-hidden')
-        //   alertEndOfSearch()
-        // }
       })
       .catch(error => console.log(error))
   }
